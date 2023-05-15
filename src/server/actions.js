@@ -26,3 +26,15 @@ export const updatePage = async (args, context) => {
 		}
 	})
 }
+
+export const updatePageContent = async (args, context) => {
+	if (!context.user) { throw new HttpError(401) }
+
+	return context.entities.Pages.updateMany({
+		where: { id: args.pageId, user: { id: context.user.id } },
+		data: {
+			content: args.data.content,
+			contentHtml: args.data.contentHtml
+		}
+	})
+}

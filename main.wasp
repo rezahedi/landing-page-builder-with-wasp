@@ -3,6 +3,9 @@ app landingPageBuilderWithWasp {
     version: "^0.10.2"
   },
   title: "landing-page-builder-with-wasp",
+  dependencies: [
+    ("grapesjs", "latest")
+  ],
   auth: {
     // Expects entity User to have (username:String) and (password:String) fields.
     userEntity: User,
@@ -78,12 +81,21 @@ page EditorPage {
   component: import Editor from "@client/pages/Editor"
 }
 
+route PreviewRoute { path: "/:slug([\\w\\-]+)", to: PreviewPage }
+page PreviewPage {
+  authRequired: true,
+  component: import Preview from "@client/pages/Preview"
+}
+
+
 
 entity Pages {=psl
     id                        Int           @id @default(autoincrement())
     title                     String
     description               String
     slug                      String        @unique
+    content                   String        @default("")
+    contentHtml               String        @default("")
     isPublished               Boolean       @default(false)
     user                      User?         @relation(fields: [userId], references: [id])
     userId                    Int?
@@ -127,6 +139,11 @@ query getPage {
   entities: [Pages]
 }
 
+query getPageBySlug {
+  fn: import { getPageBySlug } from "@server/queries.js",
+  entities: [Pages]
+}
+
 
 action createPage {
   fn: import { createPage } from "@server/actions.js",
@@ -135,5 +152,10 @@ action createPage {
 
 action updatePage {
   fn: import { updatePage } from "@server/actions.js",
+  entities: [Pages]
+}
+
+action updatePageContent {
+  fn: import { updatePageContent } from "@server/actions.js",
   entities: [Pages]
 }

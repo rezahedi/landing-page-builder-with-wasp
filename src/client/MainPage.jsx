@@ -2,8 +2,8 @@ import { useQuery } from '@wasp/queries'
 import getPages from '@wasp/queries/getPages'
 import logout from '@wasp/auth/logout.js'
 
-import NewPageForm from './pages/home/NewPageForm'
-import PagesList from './pages/home/PagesList'
+import NewPageForm from './pages/auth/home/NewPageForm'
+import PagesList from './pages/auth/home/PagesList'
 
 const MainPage = ({ user }) => {
   const { data: pages, isFetching, error } = useQuery(getPages)
