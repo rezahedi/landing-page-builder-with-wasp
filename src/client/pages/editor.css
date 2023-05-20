@@ -1,3 +1,16 @@
+html,
+body,
+#root {
+	height: 100%;
+	margin: 0;
+}
+
+.editor-wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
 #gjs {
 	border: 3px solid #444;
 }
@@ -32,22 +45,16 @@
 	justify-content: flex-start;
 	align-items: stretch;
 	flex-wrap: nowrap;
-	height: 300px;
 }
 
 .editor-canvas {
 	flex-grow: 1;
 }
 
-.panel__right {
-	flex-basis: 230px;
-	position: relative;
-	overflow-y: auto;
-}
-
 .editor {
 	display: flex;
 	flex-direction: row;
+	flex-grow: 1;
 }
 
 .gjs-blocks-cs {
@@ -58,8 +65,20 @@
 	flex-grow: 1;
 }
 
+#blocks {
+	display: flex;
+	flex-direction: column;
+	width: 310px;
+	max-width: 310px;
+}
+
 @media (max-width: 768px) {
 	.editor {
 		flex-direction: column;
+	}
+
+	#blocks {
+		width: 100%;
+		max-width: 100%;
 	}
 }

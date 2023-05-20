@@ -5,7 +5,11 @@ import { useEffect, useState } from 'react';
 import 'grapesjs/dist/css/grapes.min.css';
 import './editor.css';
 import grapesjs from 'grapesjs';
+// Always import GrapeJs Plugins after importing grapesjs
+import plugin from 'grapesjs-style-bg';
+import 'grapick/dist/grapick.min.css';
 
+import blocks from './editor/blocks';
 
 const Editor = (props) => {
 	const [editor, setEditor] = useState(null);
@@ -35,7 +39,7 @@ const Editor = (props) => {
 			// As an alternative we could use: `components: '<h1>Hello World Component!</h1>'`,
 			fromElement: true,
 			// Size of the editor
-			height: '300px',
+			height: 'auto',
 			width: 'auto',
 			// Disable the storage manager for the moment
 			storageManager: false,
@@ -43,62 +47,7 @@ const Editor = (props) => {
 			panels: { defaults: [] },
 			blockManager: {
 				appendTo: '#blocks',
-				blocks: [
-					{
-						id: 'section', // id is mandatory
-						label: '<b>Section</b>', // You can use HTML/SVG inside labels
-						attributes: { class: 'gjs-block-section' },
-						content: `<section>
-						<h1>This is a simple title</h1>
-						<div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
-					</section>`,
-					}, {
-						id: 'text',
-						label: 'Text',
-						content: '<div data-gjs-type="text">Insert your text here</div>',
-					}, {
-						id: 'image',
-						label: 'Image',
-						// Select the component once it's dropped
-						select: true,
-						// You can pass components as a JSON instead of a simple HTML string,
-						// in this case we also use a defined component type `image`
-						content: { type: 'image' },
-						// This triggers `active` event on dropped components and the `image`
-						// reacts by opening the AssetManager
-						activate: true,
-					}, {
-						id: 'hero',
-						label: 'Hero',
-						select: true,
-						content: `<section class="hero">
-						<h1 class="hero-title">Hero Title</h1>
-						<p class="hero-subtitle">Hero Subtitle</p>
-						<button class="hero-button">Hero Button</button>
-						</section>`,
-						activate: true,
-					}, {
-						id: 'social',
-						label: 'Social',
-						select: true,
-						content: `<section class="social">
-						<a href="https://www.facebook.com/" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i> Facebook</a>
-						<a href="https://www.instagram.com/" target="_blank" class="social-link"><i class="fab fa-instagram"></i> Instagram</a>
-						<a href="https://www.twitter.com/" target="_blank" class="social-link"><i class="fab fa-twitter"></i> Twitter</a>
-						<a href="https://www.linkedin.com/" target="_blank" class="social-link"><i class="fab fa-linkedin-in"></i> Linkedin</a>
-						</section>`,
-						activate: true,
-					}, {
-						id: 'footer',
-						label: 'Footer',
-						select: true,
-						content: `<footer>
-						<p class="footer-text">Footer Text</p>
-						</footer>`,
-
-						activate: true,
-					}
-				]
+				blocks: blocks
 			},
 			plugins: [(editor) => {
 				editor.Storage.add('inline', {
@@ -116,7 +65,7 @@ const Editor = (props) => {
 						});
 					}
 				})
-			}],
+			}, plugin],
 			storageManager: { type: 'inline' },
 			// storageManager: {
 			// 	type: 'local', // Type of the storage, available: 'local' | 'remote'
@@ -134,6 +83,66 @@ const Editor = (props) => {
 			// 		}
 			// 	}
 			// }
+			selectorManager: {
+				appendTo: '#blocks'
+			},
+			styleManager: {
+				appendTo: '#blocks',
+				sectors: [{
+					name: 'Dimension',
+					open: false,
+					buildProps: ['width', 'min-height', 'padding'],
+					properties: [
+						{
+							id: 'width',
+							name: 'Width',
+							property: 'width',
+							type: 'integer',
+							units: ['px', '%'],
+							default: 'auto',
+							min: 0,
+						},
+						{
+							id: 'min-height',
+							name: 'Min Height',
+							property: 'min-height',
+							type: 'integer',
+							units: ['px', '%'],
+							default: 'auto',
+							min: 0,
+						},
+					]
+				}, {
+					name: 'Extra',
+					open: false,
+					buildProps: ['color', 'background', 'box-shadow', 'custom-prop'],
+					properties: [
+						{
+							id: 'box-shadow',
+							name: 'Box Shadow',
+							property: 'box-shadow',
+							type: 'shadow',
+						},
+						{
+							id: 'custom-prop',
+							name: 'Custom Property',
+							property: 'font-size',
+							type: 'select',
+							default: '32px',
+							// List of options, available only for 'select' and 'select-block'
+							options: [
+								{ value: '12px', name: 'Tiny' },
+								{ value: '18px', name: 'Medium' },
+								{ value: '32px', name: 'Big' },
+							],
+						},
+					]
+				}]
+			},
+		});
+
+		myEditor.on('component:selected', model => {
+			console.log('selected', model);
 		});
 
 		myEditor.Panels.addPanel({
@@ -184,7 +193,7 @@ const Editor = (props) => {
 	}, [page]);
 
 	return (
-		<>
+		<div className="editor-wrapper">
 			<div>
 				<button onClick={() => handlePreview()}><i className="fa fa-eye"></i> Preview</button>
 				<button onClick={() => editor.store()}><i className="fa fa-save"></i> Save</button>
@@ -201,7 +210,7 @@ const Editor = (props) => {
 				<div id="gjs"></div>
 				<div id="blocks"></div>
 			</div>
-		</>
+		</div>
 	)
 }
 

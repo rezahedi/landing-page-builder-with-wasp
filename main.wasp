@@ -4,7 +4,8 @@ app landingPageBuilderWithWasp {
   },
   title: "landing-page-builder-with-wasp",
   dependencies: [
-    ("grapesjs", "latest")
+    ("grapesjs", "latest"),
+    ("grapesjs-style-bg", "")
   ],
   auth: {
     // Expects entity User to have (username:String) and (password:String) fields.
